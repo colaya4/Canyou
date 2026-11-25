@@ -1,287 +1,628 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>岛上的瞬间</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>继续加强版 · 高级CG近景抓拍</title>
   <style>
-    :root {
-      --bg: #0a0a0a;
-      --fg: #f5f5f5;
-      --muted: #888;
-      --accent: #4a9eff;
-      --gold: #d4a056;
-    }
-    
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     html, body {
-      height: 100%;
-      overflow: hidden;
-    }
-    
-    body {
-      font-family: 'Space Mono', monospace;
-      background: var(--bg);
-      color: var(--fg);
-    }
-    
-    .font-display { font-family: 'Cormorant Garamond', serif; }
-    
-    /* ===== 全屏图片容器 ===== */
-    .photo-scene {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-    }
-    
-    .scene-img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      object-position: center 30%;
-      /* Ken Burns 缓慢推近效果 */
-      animation: slowZoom 20s ease-in-out infinite alternate;
+      overflow: hidden;
+      background: #09111a;
     }
-    
-    @keyframes slowZoom {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.05); }
-    }
-    
-    /* 渐变遮罩：让文字可读 */
-    .scene-overlay {
-      position: fixed;
-      inset: 0;
-      background: 
-        linear-gradient(to bottom, 
-          rgba(10,10,10,0.2) 0%, 
-          rgba(10,10,10,0) 40%, 
-          rgba(10,10,10,0.4) 70%, 
-          rgba(10,10,10,0.95) 100%);
-      z-index: 1;
-    }
-    
-    /* ===== 文字内容层 ===== */
-    .content-layer {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      padding: 50px 20px 30px;
-      pointer-events: none;
-    }
-    
-    .top-area {
-      flex: 0 0 auto;
-      text-align: center;
-      animation: fadeIn 1s ease 0.3s both;
-    }
-    
-    .scene-tag {
-      display: inline-block;
-      padding: 6px 14px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 100px;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      backdrop-filter: blur(4px);
-    }
-    
-    .spacer { flex: 1; }
-    
-    .bottom-area {
-      flex: 0 0 auto;
-      pointer-events: auto;
-      animation: slideUp 0.8s ease 0.5s both;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    /* ===== 对话卡片 ===== */
-    .dialogue-card {
-      max-width: 380px;
-      margin: 0 auto;
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 28px 24px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-    
-    .quote-mark {
-      font-size: 3rem;
-      line-height: 0.5;
-      color: var(--accent);
-      opacity: 0.6;
-      margin-bottom: 8px;
-    }
-    
-    .english-quote {
-      font-size: 1.6rem;
-      font-weight: 600;
-      line-height: 1.3;
-      margin-bottom: 12px;
-      color: var(--fg);
-    }
-    
-    .chinese-quote {
-      font-size: 1rem;
-      color: var(--muted);
-      font-style: italic;
-      margin-bottom: 20px;
-    }
-    
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      margin: 16px 0;
-    }
-    
-    .narrative {
-      font-size: 0.85rem;
-      line-height: 1.8;
-      color: rgba(255,255,255,0.7);
-    }
-    
-    .highlight {
-      color: var(--gold);
-      font-weight: 600;
-    }
-    
-    /* ===== 人物标签 ===== */
-    .character-tag {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    .avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--gold));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.9rem;
-      flex-shrink: 0;
-    }
-    
-    .char-info {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-    
-    /* ===== 底部装饰 ===== */
-    .bottom-hint {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.3);
-    }
-    
-    /* ===== 图片说明 ===== */
-    .photo-credit {
-      position: fixed;
-      bottom: 10px;
-      right: 15px;
-      font-size: 0.6rem;
-      color: rgba(255,255,255,0.3);
-      z-index: 15;
-    }
-    
-    @media (min-width: 768px) {
-      .dialogue-card {
-        max-width: 450px;
-        padding: 36px 32px;
-      }
-      .english-quote {
-        font-size: 2rem;
-      }
-    }
-    
-    @media (prefers-reduced-motion: reduce) {
-      .scene-img { animation: none; }
-      * { animation-duration: 0.01ms !important; }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  
-  <!-- 真实照片背景 -->
-  <div class="photo-scene">
-    <!-- 
-      图片说明：这是一个真实照片，展示的是人站在海边岩石上看海的背影
-      如果你有自己的照片，请把下面的 URL 换成你的图片地址
-    -->
-    <img 
-      class="scene-img" 
-      src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=80" 
-      alt="人站在海边的岩石上，俯瞰大海"
-    >
-  </div>
-  
-  <!-- 遮罩 -->
-  <div class="scene-overlay"></div>
-  
-  <!-- 内容 -->
-  <div class="content-layer">
-    
-    <div class="top-area">
-      <span class="scene-tag">Island Moment</span>
-    </div>
-    
-    <div class="spacer"></div>
-    
-    <div class="bottom-area">
-      <div class="dialogue-card">
-        <div class="quote-mark font-display">"</div>
-        <p class="english-quote font-display">Can you take a picture?</p>
-        <p class="chinese-quote">你能帮我拍张照片吗？</p>
-        
-        <div class="divider"></div>
-        
-        <p class="narrative">
-          站在<span class="highlight">岛屿的巨石</span>上，面前是无尽的蔚蓝。
-          一个陌生的声音从身后传来。
-          回过头，一位外国游客举着手机。
-          <span class="highlight">语言不通</span>，但笑意是通用的。
-        </p>
-        
-        <div class="character-tag">
-          <div class="avatar">J</div>
-          <span class="char-info">A traveler from abroad</span>
-        </div>
-      </div>
-      
-      <p class="bottom-hint">Touch the screen to pause</p>
-    </div>
-    
-  </div>
-  
-  <span class="photo-credit">Photo: Unsplash</span>
+<canvas id="c"></canvas>
 
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+let W = 0, H = 0, dpr = 1, t = 0;
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+// =========================
+// 天空 + 太阳 + 海
+// =========================
+function drawBackground() {
+  // 天空
+  const sky = ctx.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, '#19314f');
+  sky.addColorStop(0.23, '#406998');
+  sky.addColorStop(0.45, '#85b6d7');
+  sky.addColorStop(0.63, '#f1bf8d');
+  sky.addColorStop(1, '#eef7fb');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, H);
+
+  // 太阳
+  const sunX = W * 0.78;
+  const sunY = H * 0.18;
+  const sunR = Math.min(W, H) * 0.085;
+
+  const glow = ctx.createRadialGradient(sunX, sunY, sunR * 0.18, sunX, sunY, sunR * 4.2);
+  glow.addColorStop(0, 'rgba(255,245,190,0.95)');
+  glow.addColorStop(0.25, 'rgba(255,212,140,0.72)');
+  glow.addColorStop(0.55, 'rgba(255,180,110,0.32)');
+  glow.addColorStop(1, 'rgba(255,180,110,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = '#ffe9ad';
+  ctx.beginPath();
+  ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 空气透视
+  const haze = ctx.createLinearGradient(0, H * 0.1, 0, H * 0.82);
+  haze.addColorStop(0, 'rgba(255,225,180,0.03)');
+  haze.addColorStop(0.45, 'rgba(255,225,180,0.08)');
+  haze.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = haze;
+  ctx.fillRect(0, 0, W, H);
+
+  // 远云
+  for (let i = 0; i < 8; i++) {
+    const cx = W * (0.08 + i * 0.12) + Math.sin(t * 0.003 + i) * 10;
+    const cy = H * (0.1 + (i % 3) * 0.06);
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 72, 20, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 海平面往上提一些，让海更明显
+  const seaTop = H * 0.68;
+
+  // 海
+  const sea = ctx.createLinearGradient(0, seaTop, 0, H);
+  sea.addColorStop(0, '#7ac6dd');
+  sea.addColorStop(0.32, '#4691b0');
+  sea.addColorStop(0.65, '#1f5b78');
+  sea.addColorStop(1, '#0d263a');
+  ctx.fillStyle = sea;
+  ctx.fillRect(0, seaTop, W, H - seaTop);
+
+  // 海平线薄雾
+  const horizonFog = ctx.createLinearGradient(0, seaTop - 10, 0, seaTop + 40);
+  horizonFog.addColorStop(0, 'rgba(255,255,255,0.0)');
+  horizonFog.addColorStop(1, 'rgba(220,240,245,0.18)');
+  ctx.fillStyle = horizonFog;
+  ctx.fillRect(0, seaTop - 12, W, 50);
+
+  // 海面太阳反光
+  ctx.save();
+  const refl = ctx.createLinearGradient(sunX, seaTop, sunX, H);
+  refl.addColorStop(0, 'rgba(255,225,170,0.45)');
+  refl.addColorStop(0.3, 'rgba(255,230,190,0.18)');
+  refl.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = refl;
+  ctx.beginPath();
+  ctx.moveTo(sunX - 50, seaTop);
+  ctx.lineTo(sunX + 50, seaTop);
+  ctx.lineTo(sunX + 220, H);
+  ctx.lineTo(sunX - 220, H);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // 更明显的波纹层次
+  for (let i = 0; i < 16; i++) {
+    const p = i / 15;
+    const y = seaTop + p * (H - seaTop);
+    const amp = 1.2 + p * 4.5;
+    const alpha = 0.07 + p * 0.12;
+    ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+    ctx.lineWidth = 1 + p * 1.2;
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += 10) {
+      const yy = y + Math.sin(x * 0.016 + t * 0.022 + i * 0.75) * amp;
+      if (x === 0) ctx.moveTo(x, yy);
+      else ctx.lineTo(x, yy);
+    }
+    ctx.stroke();
+  }
+
+  // 远处海上小岛/礁石，增加尺度感
+  ctx.fillStyle = 'rgba(50,60,72,0.35)';
+  ctx.beginPath();
+  ctx.moveTo(W * 0.08, seaTop + 26);
+  ctx.quadraticCurveTo(W * 0.14, seaTop + 8, W * 0.22, seaTop + 25);
+  ctx.lineTo(W * 0.22, seaTop + 36);
+  ctx.lineTo(W * 0.08, seaTop + 36);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(W * 0.82, seaTop + 18);
+  ctx.quadraticCurveTo(W * 0.91, seaTop - 2, W, seaTop + 20);
+  ctx.lineTo(W, seaTop + 33);
+  ctx.lineTo(W * 0.82, seaTop + 33);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// =========================
+// 悬崖：边缘清晰，能看见往下掉的大海
+// =========================
+function drawCliff() {
+  // 右侧断崖更明显
+  const edgeY = H * 0.76;
+
+  // 悬崖顶面
+  const topGrad = ctx.createLinearGradient(0, H * 0.68, 0, H);
+  topGrad.addColorStop(0, '#9aa0a8');
+  topGrad.addColorStop(1, '#5f646d');
+  ctx.fillStyle = topGrad;
+  ctx.beginPath();
+  ctx.moveTo(0, H * 0.84);
+  ctx.quadraticCurveTo(W * 0.18, H * 0.72, W * 0.38, H * 0.74);
+  ctx.quadraticCurveTo(W * 0.56, H * 0.67, W * 0.73, H * 0.71);
+  ctx.quadraticCurveTo(W * 0.84, H * 0.73, W * 0.9, edgeY);
+  ctx.lineTo(W, H * 0.82);
+  ctx.lineTo(W, H);
+  ctx.lineTo(0, H);
+  ctx.closePath();
+  ctx.fill();
+
+  // 断崖外沿亮边
+  ctx.strokeStyle = 'rgba(255,255,255,0.13)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(W * 0.08, H * 0.81);
+  ctx.quadraticCurveTo(W * 0.34, H * 0.69, W * 0.62, H * 0.72);
+  ctx.quadraticCurveTo(W * 0.82, H * 0.72, W * 0.9, edgeY);
+  ctx.stroke();
+
+  // 右侧垂直断崖面 —— 这是高度感关键
+  const wallGrad = ctx.createLinearGradient(0, edgeY, 0, H);
+  wallGrad.addColorStop(0, '#676c75');
+  wallGrad.addColorStop(0.35, '#41464f');
+  wallGrad.addColorStop(1, '#232830');
+  ctx.fillStyle = wallGrad;
+  ctx.beginPath();
+  ctx.moveTo(W * 0.9, edgeY);
+  ctx.lineTo(W, H * 0.82);
+  ctx.lineTo(W, H);
+  ctx.lineTo(W * 0.72, H);
+  ctx.quadraticCurveTo(W * 0.78, H * 0.91, W * 0.83, H * 0.85);
+  ctx.quadraticCurveTo(W * 0.88, H * 0.8, W * 0.9, edgeY);
+  ctx.closePath();
+  ctx.fill();
+
+  // 前景左下岩石，形成取景前景感
+  const leftRockGrad = ctx.createLinearGradient(0, H * 0.82, 0, H);
+  leftRockGrad.addColorStop(0, '#5e636c');
+  leftRockGrad.addColorStop(1, '#2c3139');
+  ctx.fillStyle = leftRockGrad;
+  ctx.beginPath();
+  ctx.moveTo(0, H * 0.88);
+  ctx.quadraticCurveTo(W * 0.09, H * 0.78, W * 0.2, H);
+  ctx.lineTo(0, H);
+  ctx.closePath();
+  ctx.fill();
+
+  // 顶面裂纹
+  ctx.strokeStyle = 'rgba(25,25,35,0.16)';
+  ctx.lineWidth = 1.2;
+  for (let i = 0; i < 7; i++) {
+    const y = H * 0.78 + i * 13;
+    ctx.beginPath();
+    ctx.moveTo(W * 0.18, y);
+    ctx.quadraticCurveTo(W * 0.5, y - 10, W * 0.84, y + 3);
+    ctx.stroke();
+  }
+
+  // 右侧岩壁竖向纹理
+  ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+  for (let i = 0; i < 8; i++) {
+    const x = W * (0.905 + i * 0.012);
+    ctx.beginPath();
+    ctx.moveTo(x, edgeY + i * 2);
+    ctx.lineTo(x - 12 + Math.sin(i) * 6, H);
+    ctx.stroke();
+  }
+
+  // 崖边下方空气雾，强调很高
+  const cliffFog = ctx.createLinearGradient(W * 0.74, H * 0.76, W, H);
+  cliffFog.addColorStop(0, 'rgba(220,240,250,0.0)');
+  cliffFog.addColorStop(1, 'rgba(220,240,250,0.14)');
+  ctx.fillStyle = cliffFog;
+  ctx.beginPath();
+  ctx.moveTo(W * 0.82, H * 0.78);
+  ctx.lineTo(W, H * 0.84);
+  ctx.lineTo(W, H);
+  ctx.lineTo(W * 0.72, H);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// =========================
+// 人物：略向镜头前倾，更像互动
+// =========================
+function drawPerson() {
+  const cx = W * 0.47;
+  const baseY = H * 0.79;
+  const s = Math.min(W, H) * 0.34;
+
+  ctx.save();
+  ctx.translate(cx, baseY);
+
+  // 脚下阴影
+  ctx.fillStyle = 'rgba(0,0,0,0.22)';
+  ctx.beginPath();
+  ctx.ellipse(0, s * 0.05, s * 0.22, s * 0.06, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 腿
+  let g = ctx.createLinearGradient(-s * 0.18, 0, 0, s * 0.6);
+  g.addColorStop(0, '#43596f');
+  g.addColorStop(1, '#28394a');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.12, 0);
+  ctx.lineTo(-s * 0.18, s * 0.42);
+  ctx.lineTo(-s * 0.05, s * 0.42);
+  ctx.lineTo(-s * 0.01, 0);
+  ctx.closePath();
+  ctx.fill();
+
+  g = ctx.createLinearGradient(0, 0, s * 0.18, s * 0.6);
+  g.addColorStop(0, '#56718b');
+  g.addColorStop(1, '#2d4558');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.moveTo(s * 0.02, 0);
+  ctx.lineTo(s * 0.05, s * 0.42);
+  ctx.lineTo(s * 0.18, s * 0.42);
+  ctx.lineTo(s * 0.14, 0);
+  ctx.closePath();
+  ctx.fill();
+
+  // 鞋
+  ctx.fillStyle = '#1f2328';
+  roundRect(-s * 0.19, s * 0.39, s * 0.16, s * 0.06, s * 0.02);
+  ctx.fill();
+  roundRect(s * 0.03, s * 0.39, s * 0.18, s * 0.06, s * 0.02);
+  ctx.fill();
+
+  // 身体
+  const body = ctx.createLinearGradient(-s * 0.22, -s * 0.58, s * 0.25, s * 0.08);
+  body.addColorStop(0, '#a0d1ff');
+  body.addColorStop(0.52, '#679ccc');
+  body.addColorStop(1, '#355f88');
+  ctx.fillStyle = body;
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.21, -s * 0.46);
+  ctx.quadraticCurveTo(0, -s * 0.64, s * 0.24, -s * 0.42);
+  ctx.lineTo(s * 0.18, 0);
+  ctx.quadraticCurveTo(0, s * 0.08, -s * 0.16, 0);
+  ctx.closePath();
+  ctx.fill();
+
+  // 身体亮部
+  ctx.fillStyle = 'rgba(255,255,255,0.16)';
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.02, -s * 0.5);
+  ctx.quadraticCurveTo(s * 0.13, -s * 0.33, s * 0.1, -s * 0.02);
+  ctx.lineTo(0, 0);
+  ctx.quadraticCurveTo(-s * 0.01, -s * 0.24, -s * 0.02, -s * 0.5);
+  ctx.fill();
+
+  // 左手
+  ctx.fillStyle = '#759fc6';
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.18, -s * 0.38);
+  ctx.lineTo(-s * 0.28, -s * 0.02);
+  ctx.lineTo(-s * 0.2, s * 0.02);
+  ctx.lineTo(-s * 0.11, -s * 0.28);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#efc6a8';
+  ctx.beginPath();
+  ctx.ellipse(-s * 0.23, 0, s * 0.03, s * 0.045, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 右手举手机
+  ctx.fillStyle = '#8ab2d6';
+  ctx.beginPath();
+  ctx.moveTo(s * 0.18, -s * 0.38);
+  ctx.lineTo(s * 0.34, -s * 0.54);
+  ctx.lineTo(s * 0.4, -s * 0.47);
+  ctx.lineTo(s * 0.22, -s * 0.28);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#f2c9ac';
+  ctx.beginPath();
+  ctx.arc(s * 0.39, -s * 0.485, s * 0.04, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 手机
+  ctx.save();
+  ctx.translate(s * 0.455, -s * 0.56);
+  ctx.rotate(0.18);
+  ctx.fillStyle = '#15191f';
+  roundRect(-s * 0.036, -s * 0.082, s * 0.072, s * 0.145, s * 0.014);
+  ctx.fill();
+  ctx.fillStyle = '#74d2ff';
+  roundRect(-s * 0.026, -s * 0.067, s * 0.052, s * 0.108, s * 0.01);
+  ctx.fill();
+  ctx.restore();
+
+  // 脖子
+  ctx.fillStyle = '#e7bc9e';
+  ctx.fillRect(-s * 0.03, -s * 0.58, s * 0.06, s * 0.07);
+
+  const hx = 0;
+  const hy = -s * 0.74;
+
+  // 后脑
+  ctx.fillStyle = '#6d4b39';
+  ctx.beginPath();
+  ctx.ellipse(hx, hy, s * 0.135, s * 0.155, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 脸
+  const face = ctx.createLinearGradient(-s * 0.1, hy - s * 0.12, s * 0.11, hy + s * 0.12);
+  face.addColorStop(0, '#f8d4b8');
+  face.addColorStop(1, '#dcae8c');
+  ctx.fillStyle = face;
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.085, hy - s * 0.08);
+  ctx.quadraticCurveTo(s * 0.01, hy - s * 0.15, s * 0.095, hy - s * 0.03);
+  ctx.quadraticCurveTo(s * 0.1, hy + s * 0.095, 0, hy + s * 0.125);
+  ctx.quadraticCurveTo(-s * 0.1, hy + s * 0.085, -s * 0.085, hy - s * 0.08);
+  ctx.fill();
+
+  // 前额头发
+  const hair = ctx.createLinearGradient(0, hy - s * 0.16, 0, hy + s * 0.03);
+  hair.addColorStop(0, '#906a52');
+  hair.addColorStop(1, '#52382b');
+  ctx.fillStyle = hair;
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.095, hy - s * 0.03);
+  ctx.quadraticCurveTo(-s * 0.03, hy - s * 0.17, s * 0.085, hy - s * 0.12);
+  ctx.quadraticCurveTo(s * 0.115, hy - s * 0.015, s * 0.03, hy + s * 0.01);
+  ctx.quadraticCurveTo(-s * 0.06, hy + s * 0.01, -s * 0.095, hy - s * 0.03);
+  ctx.fill();
+
+  // 头发高光
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  ctx.beginPath();
+  ctx.ellipse(-s * 0.03, hy - s * 0.08, s * 0.045, s * 0.018, -0.35, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 耳朵
+  ctx.fillStyle = '#e8bea0';
+  ctx.beginPath();
+  ctx.ellipse(-s * 0.103, hy + s * 0.01, s * 0.022, s * 0.036, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 五官
+  ctx.strokeStyle = 'rgba(95,62,45,0.42)';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.015, hy - s * 0.01);
+  ctx.quadraticCurveTo(s * 0.01, hy - s * 0.02, s * 0.035, hy);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(s * 0.03, hy + s * 0.005);
+  ctx.lineTo(s * 0.05, hy + s * 0.05);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.005, hy + s * 0.078);
+  ctx.quadraticCurveTo(s * 0.025, hy + s * 0.097, s * 0.055, hy + s * 0.078);
+  ctx.stroke();
+
+  // 衣领
+  ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  ctx.arc(0, -s * 0.53, s * 0.045, 0.15, Math.PI - 0.15);
+  ctx.stroke();
+
+  // 太阳逆光描边
+  ctx.strokeStyle = 'rgba(255,214,155,0.32)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(s * 0.14, -s * 0.38);
+  ctx.quadraticCurveTo(s * 0.22, -s * 0.54, s * 0.08, -s * 0.84);
+  ctx.stroke();
+
+  ctx.restore();
+
+  return {
+    headX: cx,
+    headY: baseY - s * 0.89,
+    centerX: cx,
+    centerY: baseY - s * 0.3,
+    scale: s
+  };
+}
+
+// =========================
+// 对话框
+// =========================
+function drawBubble(headX, headY) {
+  const bw = 250;
+  const bh = 68;
+  const bx = headX + 96;
+  const by = headY - 38 + Math.sin(t * 0.04) * 2;
+
+  ctx.fillStyle = 'rgba(0,0,0,0.16)';
+  roundRect(bx - bw / 2 + 4, by - bh / 2 + 4, bw, bh, 20);
+  ctx.fill();
+
+  const bg = ctx.createLinearGradient(0, by - bh / 2, 0, by + bh / 2);
+  bg.addColorStop(0, '#ffffff');
+  bg.addColorStop(1, '#edf5fb');
+  ctx.fillStyle = bg;
+  roundRect(bx - bw / 2, by - bh / 2, bw, bh, 20);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(bx - 84, by + bh / 2 - 8);
+  ctx.lineTo(headX + 25, headY + 14);
+  ctx.lineTo(bx - 42, by + bh / 2 - 14);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#223245';
+  ctx.font = 'bold 22px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('Can you take a picture?', bx, by);
+}
+
+// =========================
+// 镜头感：UI + 对焦 + 暗角
+// =========================
+function drawCameraOverlay(person) {
+  // 上下轻微压暗，保留镜头氛围感
+  const topShade = ctx.createLinearGradient(0, 0, 0, H * 0.16);
+  topShade.addColorStop(0, 'rgba(0,0,0,0.18)');
+  topShade.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = topShade;
+  ctx.fillRect(0, 0, W, H * 0.18);
+
+  const bottomShade = ctx.createLinearGradient(0, H, 0, H * 0.76);
+  bottomShade.addColorStop(0, 'rgba(0,0,0,0.16)');
+  bottomShade.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = bottomShade;
+  ctx.fillRect(0, H * 0.74, W, H * 0.26);
+
+  // 暗角
+  const vignette = ctx.createRadialGradient(
+    W / 2, H / 2, H * 0.22,
+    W / 2, H / 2, Math.max(W, H) * 0.74
+  );
+  vignette.addColorStop(0, 'rgba(0,0,0,0)');
+  vignette.addColorStop(1, 'rgba(0,0,0,0.22)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, W, H);
+
+  // 构图网格（很淡）
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i < 3; i++) {
+    const x = W * i / 3;
+    const y = H * i / 3;
+
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, H);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(W, y);
+    ctx.stroke();
+  }
+
+  // 对焦框保留
+  const fx = person.centerX;
+  const fy = person.centerY;
+  const fw = person.scale * 0.64;
+  const fh = person.scale * 1.05;
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 1.2;
+  ctx.strokeRect(fx - fw / 2, fy - fh / 2, fw, fh);
+
+  const l = 16;
+  function corner(x, y, sx, sy) {
+    ctx.beginPath();
+    ctx.moveTo(x, y + sy * l);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x + sx * l, y);
+    ctx.stroke();
+  }
+
+  corner(fx - fw / 2, fy - fh / 2, 1, 1);
+  corner(fx + fw / 2, fy - fh / 2, -1, 1);
+  corner(fx - fw / 2, fy + fh / 2, 1, -1);
+  corner(fx + fw / 2, fy + fh / 2, -1, -1);
+}
+
+
+// =========================
+// 镜头光斑 / 前景虚焦
+// =========================
+function drawLensEffects() {
+  // 左上轻微雾化
+  const blur = ctx.createRadialGradient(W * 0.1, H * 0.14, 0, W * 0.1, H * 0.14, 150);
+  blur.addColorStop(0, 'rgba(255,255,255,0.07)');
+  blur.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = blur;
+  ctx.fillRect(0, 0, W, H);
+
+  // 太阳 flare
+  const flares = [
+    { x: W * 0.67, y: H * 0.28, r: 26, a: 0.11 },
+    { x: W * 0.58, y: H * 0.37, r: 14, a: 0.09 },
+    { x: W * 0.47, y: H * 0.47, r: 32, a: 0.06 }
+  ];
+
+  flares.forEach(f => {
+    ctx.fillStyle = `rgba(255,210,150,${f.a})`;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+// =========================
+// 主循环
+// =========================
+function render() {
+  ctx.clearRect(0, 0, W, H);
+
+  drawBackground();
+  drawCliff();
+  const person = drawPerson();
+  drawBubble(person.headX, person.headY);
+  drawLensEffects();
+  drawCameraOverlay(person);
+
+  t++;
+  requestAnimationFrame(render);
+}
+
+render();
+</script>
 </body>
 </html>
